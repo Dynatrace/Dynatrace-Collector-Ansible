@@ -14,7 +14,7 @@
   sudo: yes
 
 - name: Copy the Dynatrace Collector installer script to /tmp
-  template: src=../../templates/linux/run-dynatrace-collector-installer.sh.j2 dest=/tmp/run-dynatrace-collector-installer.sh
+  template: src=linux/run-dynatrace-collector-installer.sh.j2 dest=/tmp/run-dynatrace-collector-installer.sh
 
 - name: Stop and disable running Dynatrace Collector services
   service: name={{ item }} state=stopped enabled=no
@@ -65,7 +65,7 @@
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
 - name: Make the '{{ item }}' init script available in /etc/init.d
-  template: src=../../templates/linux/init.d/{{ item }}.j2 dest=/etc/init.d/{{ item }} owner=root group=root mode=0755
+  template: src=linux/init.d/{{ item }}.j2 dest=/etc/init.d/{{ item }} owner=root group=root mode=0755
   with_items: dynatrace_collector_linux_service_names
   sudo: yes
 
