@@ -5,16 +5,19 @@
   sudo: yes
 
 - name: Change ownership of the installation directory if it had to be created
-  file: path="{{ dynatrace_collector_linux_install_dir }}" owner=dynatrace group=dynatrace
+  file: path="{{ dynatrace_collector_linux_install_dir }}" owner={{dynatrace_collector_user}} group={{dynatrace_collector_user}}
   when: dynatrace_collector_create_install_dir_result|changed
   sudo: yes
 
-- name: Copy the Dynatrace Collector installer to {{ dynatrace_collector_linux_install_dir }}
-  copy: src="{{ playbook_dir }}/roles/{{ dynatrace_collector_role_name }}/files/linux/{{ dynatrace_collector_linux_installer_file_name }}" dest="{{ dynatrace_collector_linux_install_dir }}"
-  sudo: yes
+- name: Download Dynatrace Collector installer
+  become: true
+  get_url:
+    url: "{{ dynatrace_collector_linux_installer_file_url }}/dynatrace-collector.jar"
+    dest: "{{ dynatrace_collector_linux_install_dir }}"
+    checksum: "{{ dynatrace_collector_checksum }}"
 
 - name: Copy the Dynatrace Collector installer script to /tmp
-  template: src=../../templates/linux/run-dynatrace-collector-installer.sh.j2 dest=/tmp/run-dynatrace-collector-installer.sh
+  template: src=linux/run-dynatrace-collector-installer.sh.j2 dest=/tmp/run-dynatrace-collector-installer.sh
 
 - name: Stop and disable running Dynatrace Collector services
   service: name={{ item }} state=stopped enabled=no
@@ -23,7 +26,7 @@
   ignore_errors: yes
 
 - name: Wait for the Dynatrace Collector to become unavailable via port {{ dynatrace_collector_agent_port }}
-  wait_for: port={{ dynatrace_collector_agent_port }} state=stopped
+  wait_for: port={{ dynatrace_collector_agent_port }} state=stopped timeout=10
   with_items: [dynatrace_collector_agent_port]
   sudo: yes
 
@@ -37,7 +40,7 @@
   sudo: yes
 
 - name: Change ownership of the installation directory
-  file: path={{ dynatrace_collector_linux_install_dir }}/{{ dynatrace_collector_installed_version_dir.stdout }} owner=dynatrace group=dynatrace state=directory recurse=yes
+  file: path="{{ dynatrace_collector_linux_install_dir }}" owner={{dynatrace_collector_user}} group={{dynatrace_collector_user}} state=directory recurse=yes
   sudo: yes
 
 - name: Change mode of the installation directory
@@ -45,7 +48,7 @@
   sudo: yes
 
 - name: Create a symlink of the actual installation directory to {{ dynatrace_collector_linux_install_dir }}/dynatrace
-  file: src={{ dynatrace_collector_linux_install_dir }}/{{ dynatrace_collector_installed_version_dir.stdout }} dest={{ dynatrace_collector_linux_install_dir }}/dynatrace owner=dynatrace group=dynatrace mode=0755 state=link
+  file: src={{ dynatrace_collector_linux_install_dir }}/{{ dynatrace_collector_installed_version_dir.stdout }} dest={{ dynatrace_collector_linux_install_dir }}/dynatrace owner={{dynatrace_collector_user}} group={{dynatrace_collector_user}} mode=0755 state=link
   sudo: yes
 
 - name: Remove the Dynatrace Collector installer
@@ -58,14 +61,14 @@
     linux_service_stop_runlevels="0 1 6"
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-- name: Compute the Dynatrace Collector's start runlevels for CentOS and Red Hat based distros
+- name: Compute the Dynatrace Collector's start runlevels for Red Hat based distros
   set_fact:
     linux_service_start_runlevels="3 5"
     linux_service_stop_runlevels="0 1 2 6"
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
-
+  when: ansible_os_family == 'RedHat'
+  
 - name: Make the '{{ item }}' init script available in /etc/init.d
-  template: src=../../templates/linux/init.d/{{ item }}.j2 dest=/etc/init.d/{{ item }} owner=root group=root mode=0755
+  template: src=linux/init.d/{{ item }}.j2 dest=/etc/init.d/{{ item }} owner=root group=root mode=0755
   with_items: dynatrace_collector_linux_service_names
   sudo: yes
 
