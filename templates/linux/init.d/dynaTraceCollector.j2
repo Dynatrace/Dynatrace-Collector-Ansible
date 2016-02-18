@@ -57,10 +57,10 @@ case "$1" in
   if [ -z "$PROCESSPID" ]; then
     if [ -z "$DT_INSTANCE" ]; then
       echo ${DT_HOME}/${DT_BINARY} -bg $DT_OPTARGS
-      su - dynatrace -c "${DT_HOME}/${DT_BINARY} -bg $DT_OPTARGS"
+      su - {{dynatrace_collector_user}} -c "${DT_HOME}/${DT_BINARY} -bg $DT_OPTARGS"
     else
       echo ${DT_HOME}/${DT_BINARY} -instance $DT_INSTANCE -bg $DT_OPTARGS
-      su - dynatrace -c "${DT_HOME}/${DT_BINARY} -instance $DT_INSTANCE -bg $DT_OPTARGS"
+      su - {{dynatrace_collector_user}} -c "${DT_HOME}/${DT_BINARY} -instance $DT_INSTANCE -bg $DT_OPTARGS"
     fi    
   else
     echo "dynaTrace $DT_PRODUCT daemon is already running!"
