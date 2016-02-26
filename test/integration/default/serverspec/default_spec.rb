@@ -3,8 +3,10 @@ require 'serverspec'
 # Required by serverspec
 set :backend, :exec
 
+# TODO fix
 describe user('dynatrace') do
   it { should exist }
+  # TODO fix
   it { should belong_to_group 'dynatrace' }
 end
 
@@ -15,7 +17,9 @@ end
 
 describe file('/opt/dynatrace/collector') do
   it { should be_directory }
+  # TODO fix
   it { should be_owned_by 'dynatrace' }
+  # TODO fix
   it { should be_grouped_into 'dynatrace' }
 end
 
@@ -33,11 +37,13 @@ describe file ('/etc/init.d/dynaTraceCollector') do
 
   its(:content) { should match /^DT_HOME=\/opt\/dynatrace$/ }
   its(:content) { should match /^DT_OPTARGS="-listen 9998 -server localhost:6698 -Xms256M -Xmx1024M -XX:PermSize=256m -XX:MaxPermSize=384m"$/ }
+  # TODO fix
   its(:content) { should match /^.*su - dynatrace -c.*$/ }
 end
 
 describe process('dtcollector') do
   it { should be_running }
+  # TODO fix
   its(:user) { should eq 'dynatrace' }
   its(:args) { should match /-listen 9998/ }
   its(:args) { should match /-Xms256M/ }
