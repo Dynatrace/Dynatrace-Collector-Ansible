@@ -1,4 +1,5 @@
 ---
+dynatrace_user: dynatrace
 dynatrace_collector_installer_bitsize: 64
 
 dynatrace_collector_linux_install_dir: /opt
