@@ -28,7 +28,7 @@
 DT_HOME={{ dynatrace_collector_linux_install_dir }}/dynatrace
 DT_OPTARGS="-listen {{ dynatrace_collector_agent_port }} -server {{ dynatrace_collector_server_hostname }}:{{ dynatrace_collector_server_port }}{% if dynatrace_collector_jvm_xms %} -Xms{{ dynatrace_collector_jvm_xms }}{% endif %}{% if dynatrace_collector_jvm_xmx %} -Xmx{{ dynatrace_collector_jvm_xmx }}{% endif %}{% if dynatrace_collector_jvm_perm_size %} -XX:PermSize={{ dynatrace_collector_jvm_perm_size }}{% endif %}{% if dynatrace_collector_jvm_max_perm_size %} -XX:MaxPermSize={{ dynatrace_collector_jvm_max_perm_size }}{% endif %}"
 
-DT_INSTANCE=
+DT_INSTANCE={{ dynatrace_collector_instance_name }}
 
 DT_RUNASUSER={{ dynatrace_collector_owner }}
 
