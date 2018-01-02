@@ -1,7 +1,7 @@
 ---
-- name: Remove package 'java-1.7.0-openjdk'
+- name: Remove package 'java-1.8.0-openjdk'
   yum:
-    pkg: java-1.7.0-openjdk
+    pkg: java-1.8.0-openjdk
     state: absent
   ignore_errors: yes
   when: not java_install | skipped
