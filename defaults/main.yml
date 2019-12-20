@@ -18,4 +18,6 @@ dynatrace_collector_jvm_max_perm_size:
 dynatrace_collector_owner: dynatrace
 dynatrace_collector_group: dynatrace
 
+dynatrace_collector_instance_name:
+
 dynatrace_collector_role_name: Dynatrace.Dynatrace-Collector
